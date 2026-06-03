@@ -1,0 +1,7 @@
+129.65.0.0/16:
+  description: Cal Poly test prefix
+  asn:
+    - 7960
+  ignoreMorespecifics: false
+  ignore: false
+  group: test

@@ -1,0 +1,13 @@
+[package]
+name = "bgpkit_ndjson"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bgpkit-broker = "*"
+bgpkit-parser = "*"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+log = "0.4"
+env_logger = "0.11"
+clap = {version = "4", features = ["derive"] }

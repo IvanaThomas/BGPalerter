@@ -1,0 +1,124 @@
+connectors:
+  - file: connectorNDJSON
+    name: ndj
+    params:
+      file: /Users/ivanathomas/bgpkit_ndjson/output.ndjson
+      timedReplay: false
+      speed: 10
+
+monitors:
+  - file: monitorPassthrough
+    channel: passthrough
+    name: passthrough-test
+    params: {}
+  - file: monitorHijack
+    channel: hijack
+    name: basic-hijack-detection
+    params:
+      thresholdMinPeers: 1
+
+reports:
+  - file: reportFile
+    channels:
+      - passthrough
+      - hijack
+    params:
+      persistAlertData: false
+      alertDataDirectory: alertdata/
+
+############################
+# Notification settings:
+# - notificationIntervalSeconds
+#       Defines the amount of seconds after which an alert can be repeated. An alert is repeated only if the event that
+#       triggered it is not yet solved.
+# - persistStatus
+#       Persist the status of BGPalerter. If the process is restarted, the list of alerts already sent is recovered
+#       and they are not repeated. The process must be able to write on disc, this option will create a file inside .cache/
+
+notificationIntervalSeconds: 86400
+persistStatus: true
+
+############################
+# REST API settings:
+# - rest.host
+#       The IP address the server will listen. The default value is localhost, this means the API will not be reachable
+#       from another host. To make it public use null or 0.0.0.0.
+# - rest.port
+#       The port the server will listen
+
+rest:
+  host: localhost
+  port: 8011
+
+logging:
+  directory: logs
+  logRotatePattern: YYYY-MM-DD
+  maxRetainedFiles: 10
+  maxFileSizeMB: 15
+  compressOnRotation: false
+  useUTC: true
+
+checkForUpdatesAtBoot: true
+generatePrefixListEveryDays: 0
+
+############################
+# Process monitoring settings:
+# Uncomment or add classes under processMonitors if you want to monitor or send logs about the status of the BGPalerter process
+
+#processMonitors:
+#  - file: uptimeApi
+#    params:
+#      useStatusCodes: true
+#
+#  - file: uptimeHealthcheck
+#    params:
+#      url: url_to_poll
+#      intervalSeconds: 300
+#      method: get
+#
+#  - file: sentryModule
+#    params:
+#      dsn: https://<key>@sentry.io/<project>
+
+############################
+# The files containing the monitored prefixes. Please see prefixes.yml for an example.
+# This is an array (use new lines and dashes!)
+
+monitoredPrefixesFiles:
+  - prefixes.yml
+
+############################
+# The file containing the user groups.
+# User groups can be specified
+# 1) directly above, in each report module; or
+# 2) inside an external file, as specified below (disabled by default).
+# Using an external file allows BGPalerter to auto-reload the user group definitions
+# when the external file is changed.
+
+# groupsFile: groups.yml.example
+
+############################
+# RPKI settings:
+# Global RPKI settings shared across all monitors requiring RPKI data
+# More information here: https://github.com/nttgin/BGPalerter/blob/main/docs/rpki.md
+#
+# To enable ROA expiration alerts, you need VRPs including expiration timestamps.
+# "rpkiclient" is the default vrpProvider since is the only one supporting ROAs expiration data.
+
+rpki:
+  vrpProvider: rpkiclient
+  refreshVrpListMinutes: 15
+  markDataAsStaleAfterMinutes: 120
+
+############################
+# Advanced settings (Don't touch here!)
+# Please, refer to the documentation to know the meaning of the following parameters.
+
+alertOnlyOnce: false
+fadeOffSeconds: 360
+checkFadeOffGroupsSeconds: 30
+pidFile: bgpalerter.pid
+maxMessagesPerSecond: 6000
+multiProcess: false
+environment: production
+configVersion: 2
