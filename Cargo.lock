@@ -3,6 +3,19 @@
 version = 4
 
 [[package]]
+name = "BGPalerter"
+version = "0.1.0"
+dependencies = [
+ "bgpkit-broker",
+ "bgpkit-parser",
+ "clap",
+ "env_logger",
+ "log",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "adler2"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -202,19 +215,6 @@ dependencies = [
  "num_enum",
  "oneio",
  "regex",
-]
-
-[[package]]
-name = "bgpkit_ndjson"
-version = "0.1.0"
-dependencies = [
- "bgpkit-broker",
- "bgpkit-parser",
- "clap",
- "env_logger",
- "log",
- "serde",
- "serde_json",
 ]
 
 [[package]]

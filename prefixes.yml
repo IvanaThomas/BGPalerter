@@ -1,7 +1,40 @@
 129.65.0.0/16:
-  description: Cal Poly test prefix
+  description: Auto-discovered prefix for AS7960
   asn:
     - 7960
   ignoreMorespecifics: false
   ignore: false
-  group: test
+  group: replay
+
+198.188.150.0/23:
+  description: Auto-discovered prefix for AS7960
+  asn:
+    - 7960
+  ignoreMorespecifics: false
+  ignore: false
+  group: replay
+
+198.188.152.0/22:
+  description: Auto-discovered prefix for AS7960
+  asn:
+    - 7960
+  ignoreMorespecifics: false
+  ignore: false
+  group: replay
+
+198.188.159.0/24:
+  description: Auto-discovered prefix for AS7960
+  asn:
+    - 7960
+  ignoreMorespecifics: false
+  ignore: false
+  group: replay
+
+207.62.152.0/24:
+  description: Auto-discovered prefix for AS7960
+  asn:
+    - 7960
+  ignoreMorespecifics: false
+  ignore: false
+  group: replay
+

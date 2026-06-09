@@ -4,6 +4,7 @@ use serde_json::{json, Value};
 use std::fs::File;
 use std::io::Write;
 use clap::Parser;
+use std::collections::BTreeSet;
 
 #[derive(Parser, Debug)]
 #[command(about = "Fetch bgp routes")]
@@ -19,6 +20,9 @@ struct Args {
     #[arg(short = 'e', long, default_value = "1764547200")]
     end: String,
 
+    #[arg(short = 'n', long, default_value_t = 50)]
+    num_records: usize,
+
 }
 
 fn main() {
@@ -26,6 +30,7 @@ fn main() {
 
     let mut file = File::create("output.ndjson").unwrap();
     let mut records: Vec<Value> = Vec::new();
+    let mut discovered_prefixes: BTreeSet<String> = BTreeSet::new();
 
     let broker = bgpkit_broker::BgpkitBroker::new()
         .ts_start(&args.start)
@@ -53,13 +58,17 @@ fn main() {
                     });
 
                     records.push(record);
+                    discovered_prefixes.insert(elem.prefix.to_string());
 
-                    if records.len() >= 50 {
+                    if records.len() >= args.num_records {
                         break;
                     }
                 }
 
             }
+        }
+        if records.len() >= args.num_records {
+            break;
         }
 
     }
@@ -72,4 +81,17 @@ fn main() {
         writeln!(file, "{}", record).unwrap();
     }
     println!("wrote {} records to output.ndjson", records.len());
+
+    //write prefixes.yml
+    let mut prefixes_file = File::create("prefixes.yml").unwrap();
+    for prefix in &discovered_prefixes {
+        writeln!(prefixes_file, "{}:", prefix).unwrap();
+        writeln!(prefixes_file, "  description: Auto-discovered prefix for AS{}", args.asn).unwrap();
+        writeln!(prefixes_file, "  asn:").unwrap();
+        writeln!(prefixes_file, "    - {}", args.asn).unwrap();
+        writeln!(prefixes_file, "  ignoreMorespecifics: false").unwrap();
+        writeln!(prefixes_file, "  ignore: false").unwrap();
+        writeln!(prefixes_file, "  group: replay").unwrap();
+        writeln!(prefixes_file).unwrap();
+    }
 }

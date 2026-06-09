@@ -12,16 +12,18 @@ export default class ConnectorNDJSON extends Connector {
         this.stopped = false;
         this.reader = null;
         this.speed = params.speed || 1;
-        this.timedReplay = params.timedReply || false;
+        this.timedReplay = params.timedReplay || false;
     }
 
     // must implement static transform
     // will transform message from ndjson to what bgpalerter wants
     static transform = (message) => {
+        console.log("TRANSFORM CALLED", message.type);
         if (message.type !== "ndjson_message") {
             return [];
         }
         const record = message.data;
+        console.log("TRANSFORM RECORD", record.prefix, record.origin )
 
         const components = [];
         const timestamp = Number(record.timestamp ) * 1000;
@@ -34,7 +36,7 @@ export default class ConnectorNDJSON extends Connector {
                 type: "announcement",
                 prefix: record.prefix,
                 peer: record.peer_ip,
-                peerAS: record.peer_asn,
+                peerAS: Number(record.peer_asn),
                 path,
                 originAS,
                 nextHop: record.next_hop,
@@ -46,11 +48,12 @@ export default class ConnectorNDJSON extends Connector {
             components.push({
                 type: "withdrawal",
                 prefix: record.prefix,
-                peer: record.peer,
+                peer: record.peer_ip,
                 peerAS: record.peer_asn,
                 timestamp
             });
         }
+        console.log("TRANSFORMED COMPONENTS", components);
         return components;
     };
 
