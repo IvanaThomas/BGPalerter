@@ -4,7 +4,7 @@ connectors:
     params:
       file: /Users/ivanathomas/BGPalerter/output.ndjson
       timedReplay: false
-      speed: 10
+      speed: 1
 
 monitors:
   - file: monitorPassthrough
@@ -20,7 +20,7 @@ monitors:
 reports:
   - file: reportFile
     channels:
-      - passthrough
+      #- passthrough
       - hijack
     params:
       persistAlertData: false

@@ -23,10 +23,35 @@ struct Args {
     #[arg(short = 'n', long, default_value_t = 50)]
     num_records: usize,
 
+    #[arg( long, default_value_t = 10)]
+    replay_speed: u32
+
+}
+
+fn update_config_speed(speed: u32) {
+    let contents = std::fs::read_to_string("config.yml")
+        .expect("Failed to read config.yml");
+
+    let updated = contents
+        .lines()
+        .map(|line| {
+            if line.trim_start().starts_with("speed:") {
+                format!("{}speed: {}", &line[..line.find('s').unwrap()], speed)
+            } else {
+                line.to_string()
+            }
+        })
+        .collect::<Vec<_>>()
+        .join("\n");
+
+    std::fs::write("config.yml", updated)
+        .expect("Failed to write config.yml");
 }
 
 fn main() {
     let args = Args::parse();
+
+    update_config_speed(args.replay_speed);
 
     let mut file = File::create("output.ndjson").unwrap();
     let mut records: Vec<Value> = Vec::new();
